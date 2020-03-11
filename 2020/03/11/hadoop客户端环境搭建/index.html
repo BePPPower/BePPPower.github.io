@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="根据尚硅谷教程来配置maven与hadoop 视频地址：尚硅谷教程 根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流： 首先需要win10下编译过的hadoop，这个就花了一个多小时去找，最终在尚硅谷官网找到安装包，下载又花了一晚上。供上网盘链接：https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1FZE3w766ILHfJQj0qWp0dQ 提取码：33wp  然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop客户端环境搭建">
+<meta property="og:url" content="http://yoursite.com/2020/03/11/hadoop%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="aiFe&#39;s blog">
+<meta property="og:description" content="根据尚硅谷教程来配置maven与hadoop 视频地址：尚硅谷教程 根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流： 首先需要win10下编译过的hadoop，这个就花了一个多小时去找，最终在尚硅谷官网找到安装包，下载又花了一晚上。供上网盘链接：https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1FZE3w766ILHfJQj0qWp0dQ 提取码：33wp  然">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200310222842707.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020031022305123.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200310223111984.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-03-11T01:36:34.000Z">
+<meta property="article:modified_time" content="2020-03-11T01:37:35.252Z">
+<meta property="article:author" content="Fang TieWei">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200310222842707.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70">
+
+<link rel="canonical" href="http://yoursite.com/2020/03/11/hadoop%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>hadoop客户端环境搭建 | aiFe's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">aiFe's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/11/hadoop%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang TieWei">
+      <meta itemprop="description" content="好好学习，天天向上!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="aiFe's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hadoop客户端环境搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-03-11 09:36:34 / Modified: 09:37:35" itemprop="dateCreated datePublished" datetime="2020-03-11T09:36:34+08:00">2020-03-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="根据尚硅谷教程来配置maven与hadoop"><a href="#根据尚硅谷教程来配置maven与hadoop" class="headerlink" title="根据尚硅谷教程来配置maven与hadoop"></a>根据尚硅谷教程来配置maven与hadoop</h1><p> 视频地址：<a href="https://www.bilibili.com/video/av32081351?p=55" target="_blank" rel="noopener">尚硅谷教程</a></p>
+<h3 id="根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流："><a href="#根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流：" class="headerlink" title="根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流："></a>根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流：</h3><ol>
+<li>首先需要win10下编译过的hadoop，这个就花了一个多小时去找，最终在尚硅谷官网找到安装包，下载又花了一晚上。供上网盘链接：<a href="https://pan.baidu.com/s/1FZE3w766ILHfJQj0qWp0dQ" target="_blank" rel="noopener">https://pan.baidu.com/s/1FZE3w766ILHfJQj0qWp0dQ </a><br>提取码：33wp </li>
+<li>然后创建maven项目，但是我的eclipse中maven好像要更新，所以先清理了一下，然后updat prioject。这样又花了一个多小时。。。</li>
+<li>解压缩这个hadoop安装包在一个无中文的目录下；然后配置环境变量，这个简单，但是一开始只配了HADOOP_HOME,而<strong>忘记配置Path路径</strong>，结果导致后面运行程序的时候一直报这个错：Conld not locate null\bin\winutils（其实这个错误是由于缺少winutils.exe文件导致的，但是一般在hadoop/bin目录下有这个文件，而我忘记配Path路径导致系统找不到这个文件），又改错改半天。。。所以同学们一定要细心哦。</li>
+<li>在修改pom.xml时又出现错误：<img src="https://img-blog.csdnimg.cn/20200310222842707.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70" alt="错误位置及原因">错误原因在图片上，既然找到了错误原因，那对症下药就好了。我的方法是：去网上下载了tool.jar包,(可能从网上载下来不是这个名字，那就重命名为tools.jar），将其放在${JAVA_HOME}(看你的环境变量JAVA_HOME的位置）/lib/下面，这样就没问题了。附上我下的tool.jar文件<a href="%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps://pan.baidu.com/s/1-qN3UfgX6s-l7CpsCHgUWw">链接：https://pan.baidu.com/s/1-qN3UfgX6s-l7CpsCHgUWw 
+</a>提取码：i4ef</li>
+<li>在项目的 src/main/resources 目录下，新建一个文件，命名为“log4j.properties”，填入相关信息。这一步没问题</li>
+<li>配置用户名称：客户端去操作 HDFS 时，是有一个用户身份的。默认情况下，HDFS 客户端 API 会从 JVM 中获取一个参数来作为自己的用户身份：-DHADOOP_USER_NAME=atguigu，atguigu 为用户名称。 这一步也没问题。</li>
+<li>执行程序，报错： could not locate null/bin/winutils，错误原因看上面的步骤2，别忘了上面步骤2的配置两个环境变量哦。如果还是没有解决的话，那可能是你真的没有winutils这个文件，此时你要查看hadoop\bin目录下是否有winutils.exe这个文件，如果没有的话，那就去网上下载一下，然后放到$HADOOP_HOME\bin目录下就行了。我找到的winutils链接<a href="%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps://pan.baidu.com/s/1qVnnegbK0QIeQyKWvUCObA">链接https://pan.baidu.com/s/1qVnnegbK0QIeQyKWvUCObA </a>提取码：qeme</li>
+<li>再次执行程序（执行程序前要保证你已经开启了hadoop），运行成功，但是有5个warning：<img src="https://img-blog.csdnimg.cn/2020031022305123.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述">这个警告吧，主要是因为JDK版本不一致，如果你是jdk1.8的话应该是没有这个警告的，但是我的eclipse是两年前配的jdk10,所以就出现了这个警告。所以不管他也是可以的，你看我不管他他也成功执行了并输出over! 如果你觉得这几个warning不舒服想弄掉的话，解决方法是：安装jdk1.8,修改JAVA_HOME环境变量，修改eclipse中的配置： eclipse界面-&gt;windows-&gt;preferences-&gt;java-&gt;installed jres 修改一下路径，点击apply。再次执行,这些warning就消失了，嘿嘿：（jdk-1.8-windows:<a href="%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps://pan.baidu.com/s/1nvnD2OioiD2KMzSGX93-pA">链接：https://pan.baidu.com/s/1nvnD2OioiD2KMzSGX93-pA  
+</a>提取码：yhe3）<img src="https://img-blog.csdnimg.cn/20200310223111984.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70" alt="成功！"><h1 id="搞定，收工！！"><a href="#搞定，收工！！" class="headerlink" title="搞定，收工！！"></a>搞定，收工！！</h1></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/23/C++%E5%88%A9%E7%94%A8ncurses%E5%BA%93%E5%AE%9E%E7%8E%B0%E8%B4%AA%E5%90%83%E8%AE%BE/" rel="prev" title="C++利用ncurses库实现贪吃设">
+      <i class="fa fa-chevron-left"></i> C++利用ncurses库实现贪吃设
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#根据尚硅谷教程来配置maven与hadoop"><span class="nav-number">1.</span> <span class="nav-text">根据尚硅谷教程来配置maven与hadoop</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流："><span class="nav-number">1.0.1.</span> <span class="nav-text">根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搞定，收工！！"><span class="nav-number">2.</span> <span class="nav-text">搞定，收工！！</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang TieWei</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang TieWei</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -143,6 +143,77 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/11/hadoop%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang TieWei">
+      <meta itemprop="description" content="好好学习，天天向上!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="aiFe's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/11/hadoop%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">hadoop客户端环境搭建</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-03-11 09:36:34 / Modified: 09:37:35" itemprop="dateCreated datePublished" datetime="2020-03-11T09:36:34+08:00">2020-03-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="根据尚硅谷教程来配置maven与hadoop"><a href="#根据尚硅谷教程来配置maven与hadoop" class="headerlink" title="根据尚硅谷教程来配置maven与hadoop"></a>根据尚硅谷教程来配置maven与hadoop</h1><p> 视频地址：<a href="https://www.bilibili.com/video/av32081351?p=55" target="_blank" rel="noopener">尚硅谷教程</a></p>
+<h3 id="根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流："><a href="#根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流：" class="headerlink" title="根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流："></a>根据尚硅谷的教程来的，结果还是花了一上午，写下这篇配置记录，供有相同问题的同学交流：</h3><ol>
+<li>首先需要win10下编译过的hadoop，这个就花了一个多小时去找，最终在尚硅谷官网找到安装包，下载又花了一晚上。供上网盘链接：<a href="https://pan.baidu.com/s/1FZE3w766ILHfJQj0qWp0dQ" target="_blank" rel="noopener">https://pan.baidu.com/s/1FZE3w766ILHfJQj0qWp0dQ </a><br>提取码：33wp </li>
+<li>然后创建maven项目，但是我的eclipse中maven好像要更新，所以先清理了一下，然后updat prioject。这样又花了一个多小时。。。</li>
+<li>解压缩这个hadoop安装包在一个无中文的目录下；然后配置环境变量，这个简单，但是一开始只配了HADOOP_HOME,而<strong>忘记配置Path路径</strong>，结果导致后面运行程序的时候一直报这个错：Conld not locate null\bin\winutils（其实这个错误是由于缺少winutils.exe文件导致的，但是一般在hadoop/bin目录下有这个文件，而我忘记配Path路径导致系统找不到这个文件），又改错改半天。。。所以同学们一定要细心哦。</li>
+<li>在修改pom.xml时又出现错误：<img src="https://img-blog.csdnimg.cn/20200310222842707.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70" alt="错误位置及原因">错误原因在图片上，既然找到了错误原因，那对症下药就好了。我的方法是：去网上下载了tool.jar包,(可能从网上载下来不是这个名字，那就重命名为tools.jar），将其放在${JAVA_HOME}(看你的环境变量JAVA_HOME的位置）/lib/下面，这样就没问题了。附上我下的tool.jar文件<a href="%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps://pan.baidu.com/s/1-qN3UfgX6s-l7CpsCHgUWw">链接：https://pan.baidu.com/s/1-qN3UfgX6s-l7CpsCHgUWw 
+</a>提取码：i4ef</li>
+<li>在项目的 src/main/resources 目录下，新建一个文件，命名为“log4j.properties”，填入相关信息。这一步没问题</li>
+<li>配置用户名称：客户端去操作 HDFS 时，是有一个用户身份的。默认情况下，HDFS 客户端 API 会从 JVM 中获取一个参数来作为自己的用户身份：-DHADOOP_USER_NAME=atguigu，atguigu 为用户名称。 这一步也没问题。</li>
+<li>执行程序，报错： could not locate null/bin/winutils，错误原因看上面的步骤2，别忘了上面步骤2的配置两个环境变量哦。如果还是没有解决的话，那可能是你真的没有winutils这个文件，此时你要查看hadoop\bin目录下是否有winutils.exe这个文件，如果没有的话，那就去网上下载一下，然后放到$HADOOP_HOME\bin目录下就行了。我找到的winutils链接<a href="%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps://pan.baidu.com/s/1qVnnegbK0QIeQyKWvUCObA">链接https://pan.baidu.com/s/1qVnnegbK0QIeQyKWvUCObA </a>提取码：qeme</li>
+<li>再次执行程序（执行程序前要保证你已经开启了hadoop），运行成功，但是有5个warning：<img src="https://img-blog.csdnimg.cn/2020031022305123.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述">这个警告吧，主要是因为JDK版本不一致，如果你是jdk1.8的话应该是没有这个警告的，但是我的eclipse是两年前配的jdk10,所以就出现了这个警告。所以不管他也是可以的，你看我不管他他也成功执行了并输出over! 如果你觉得这几个warning不舒服想弄掉的话，解决方法是：安装jdk1.8,修改JAVA_HOME环境变量，修改eclipse中的配置： eclipse界面-&gt;windows-&gt;preferences-&gt;java-&gt;installed jres 修改一下路径，点击apply。再次执行,这些warning就消失了，嘿嘿：（jdk-1.8-windows:<a href="%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps://pan.baidu.com/s/1nvnD2OioiD2KMzSGX93-pA">链接：https://pan.baidu.com/s/1nvnD2OioiD2KMzSGX93-pA  
+</a>提取码：yhe3）<img src="https://img-blog.csdnimg.cn/20200310223111984.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mjc4MDc4NA==,size_16,color_FFFFFF,t_70" alt="成功！"><h1 id="搞定，收工！！"><a href="#搞定，收工！！" class="headerlink" title="搞定，收工！！"></a>搞定，收工！！</h1></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/23/C++%E5%88%A9%E7%94%A8ncurses%E5%BA%93%E5%AE%9E%E7%8E%B0%E8%B4%AA%E5%90%83%E8%AE%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -300,7 +371,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
